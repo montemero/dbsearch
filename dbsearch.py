@@ -1,6 +1,25 @@
+# Проверка и установка необходимых модулей
+required_modules = ['colorama', 'os', 'time', 'threading', 'datetime']
+
+import importlib
+import subprocess
+import sys
+
+def check_and_install_modules():
+    for module in required_modules:
+        try:
+            importlib.import_module(module)
+            print(f"Модуль {module} уже установлен.")
+        except ImportError:
+            print(f"Модуль {module} не установлен. Установка...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", module])
+            print(f"Модуль {module} успешно установлен.")
+
+check_and_install_modules()
+
+# Импорт необходимых модулей
 from colorama import Fore
 import os
-import re
 import time
 import threading
 from datetime import date
@@ -109,10 +128,11 @@ try:
         for line_number, line in enumerate(file, 1):
             if search_value in line:
                 print(f"\n{Fore.GREEN}(+) Найдено в строке {line_number}:{Fore.RESET}")
-                print(f"{line.strip()}")
-                logs = open(f'логи_{current_date}.txt', 'a+')
+                highlighted_line = line.replace(search_value, f"{Fore.RED}{search_value}{Fore.RESET}")
+                print(f"{highlighted_line.strip()}")
                 with open(full_path, 'a+', encoding='utf-8') as logs:
                     logs.write(f'\n{line}')
+
 except KeyboardInterrupt:
     print(f"\n{Fore.YELLOW}(*) Поиск прерван пользователем.{Fore.RESET}")
     with open(full_path, 'a+', encoding='utf-8') as logs:
